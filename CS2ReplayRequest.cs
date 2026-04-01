@@ -4,6 +4,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace CS2ReplayRequest;
@@ -19,6 +20,8 @@ public partial class CS2ReplayRequest : BasePlugin
     private static readonly HttpClient HttpClient = new();
 
     private const int CooldownSeconds = 10;
+
+    private static readonly string Prefix = $"{ChatColors.Magenta}FKZ {ChatColors.Default}| ";
 
     [GeneratedRegex(@"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", RegexOptions.IgnoreCase)]
     private static partial Regex UuidRegex();
@@ -86,7 +89,7 @@ public partial class CS2ReplayRequest : BasePlugin
             var remaining = CooldownSeconds - (DateTime.UtcNow - lastUse).TotalSeconds;
             if (remaining > 0)
             {
-                command.ReplyToCommand($" \u000EFKZ \x01| Please wait \x06{remaining:F0}s\x01 before requesting another replay.");
+                command.ReplyToCommand($"{Prefix}Please wait {ChatColors.Lime}{remaining:F0}s{ChatColors.Default} before requesting another replay.");
                 return;
             }
         }
@@ -96,7 +99,7 @@ public partial class CS2ReplayRequest : BasePlugin
 
         if (!UuidRegex().IsMatch(uuid))
         {
-            command.ReplyToCommand($" \u000EFKZ \x01| Invalid UUID format. Example: !replayreq 019a992d-749d-70f5-b09e-ee77653aeafb");
+            command.ReplyToCommand($"{Prefix}Invalid UUID format. Example: !replayreq 019a992d-749d-70f5-b09e-ee77653aeafb");
             return;
         }
 
@@ -104,11 +107,11 @@ public partial class CS2ReplayRequest : BasePlugin
 
         if (_downloadedReplays.Contains(uuid) || File.Exists(destPath))
         {
-            command.ReplyToCommand($" \u000EFKZ \x01| Replay \x06{uuid}\x01 already exists on the server.");
+            command.ReplyToCommand($"{Prefix}Replay {ChatColors.Lime}{uuid}{ChatColors.Default} already exists on the server.");
             return;
         }
 
-        command.ReplyToCommand($" \u000EFKZ \x01| Downloading replay \x06{uuid}\x01...");
+        command.ReplyToCommand($"{Prefix}Downloading replay {ChatColors.Lime}{uuid}{ChatColors.Default}...");
 
         var playerName = player.PlayerName;
 
@@ -142,7 +145,7 @@ public partial class CS2ReplayRequest : BasePlugin
                 {
                     Server.NextFrame(() =>
                     {
-                        player.PrintToChat($" \u000EFKZ \x01| Replay \x06{uuid}\x01 not found on any server.");
+                        player.PrintToChat($"{Prefix}Replay {ChatColors.Lime}{uuid}{ChatColors.Default} not found on any server.");
                     });
                     return;
                 }
@@ -156,7 +159,7 @@ public partial class CS2ReplayRequest : BasePlugin
 
                 Server.NextFrame(() =>
                 {
-                    player.PrintToChat($" \u000EFKZ \x01| Replay \x06{uuid}\x01 downloaded successfully ({bytes.Length:N0} bytes).");
+                    player.PrintToChat($"{Prefix}Replay {ChatColors.Lime}{uuid}{ChatColors.Default} downloaded successfully ({bytes.Length:N0} bytes).");
                 });
             }
             catch (Exception ex)
@@ -165,7 +168,7 @@ public partial class CS2ReplayRequest : BasePlugin
 
                 Server.NextFrame(() =>
                 {
-                    player.PrintToChat($" \u000EFKZ \x01| An error occurred downloading replay \x06{uuid}\x01.");
+                    player.PrintToChat($"{Prefix}An error occurred downloading replay {ChatColors.Lime}{uuid}{ChatColors.Default}.");
                 });
             }
         });
