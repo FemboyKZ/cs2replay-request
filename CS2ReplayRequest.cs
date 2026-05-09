@@ -15,8 +15,8 @@ public partial class CS2ReplayRequest : BasePlugin
     public override string ModuleVersion => "1.0.1";
     public override string ModuleAuthor => "jvnipers";
     public override string ModuleDescription => "Allows players to request replay files from the FKZ filehost.";
-    private static readonly string BaseUrl = "https://files.femboy.kz/fastdl/cs2/kzreplays/";
-    private static readonly string? BackupUrl = "https://files-na.femboy.kz/fastdl/cs2/kzreplays/";
+    private static readonly string BaseUrl = "https://files.femboykz.com/fastdl/cs2/kzreplays/";
+    private static readonly string? BackupUrl = "https://files-na.femboykz.com/fastdl/cs2/kzreplays/";
     private static readonly HttpClient HttpClient = new();
 
     private const int CooldownSeconds = 10;
